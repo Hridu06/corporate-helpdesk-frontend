@@ -6,10 +6,21 @@ import { ResetPasswordPage } from '../features/auth/pages/ResetPasswordPage'
 import { VerifyEmailPage } from '../features/auth/pages/VerifyEmailPage'
 import { AuthLayout } from '../layouts/AuthLayout'
 import { MainLayout } from '../layouts/MainLayout'
+import { ComingSoonPage } from '../pages/common/ComingSoonPage'
 import { DashboardPage } from '../pages/dashboard/DashboardPage'
 import { NotFoundPage } from '../pages/errors/NotFoundPage'
 import { GuestRoute } from './GuestRoute'
+import { moduleRoutes } from './moduleRoutes'
+import { PermissionRoute } from './PermissionRoute'
 import { ProtectedRoute } from './ProtectedRoute'
+
+// One permission-gated route per module; each becomes a real page as it is built.
+const moduleRouteObjects = moduleRoutes.map((route) => ({
+  element: <PermissionRoute permission={route.permission} />,
+  children: [
+    { path: route.path, element: <ComingSoonPage title={route.label} description={route.description} /> },
+  ],
+}))
 
 // Forgot/reset/verify pages are public on purpose: they are reached from emailed links.
 // Route guards are UX only; the backend authorises every API request.
@@ -35,7 +46,7 @@ const router = createBrowserRouter([
     children: [
       {
         element: <MainLayout />,
-        children: [{ path: '/dashboard', element: <DashboardPage /> }],
+        children: [{ path: '/dashboard', element: <DashboardPage /> }, ...moduleRouteObjects],
       },
     ],
   },

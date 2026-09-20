@@ -1,20 +1,29 @@
 import { useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+import { moduleRoutes } from '../routes/moduleRoutes'
 import { cn } from '../utils/cn'
 import { config } from '../utils/config'
-import { navigation } from './navigation'
+
+const dashboardItem = { key: 'dashboard', path: '/dashboard', label: 'Dashboard' }
 
 function SidebarContent({ onNavigate }) {
+  const { hasPermission } = useAuth()
+
+  // Only modules the user's permissions allow are listed. This is UX, not security.
+  const items = [dashboardItem, ...moduleRoutes.filter((route) => hasPermission(route.permission))]
+
   return (
     <div className="flex h-full flex-col bg-slate-900 text-slate-200">
       <div className="flex h-16 shrink-0 items-center px-6 text-lg font-semibold text-white">
         {config.appName}
       </div>
-      <nav aria-label="Main" className="flex-1 space-y-1 px-3 py-4">
-        {navigation.map((item) => (
+      <nav aria-label="Main" className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        {items.map((item) => (
           <NavLink
-            key={item.to}
-            to={item.to}
+            key={item.key}
+            to={item.path}
+            end
             onClick={onNavigate}
             className={({ isActive }) =>
               cn(
