@@ -1,19 +1,24 @@
+import { lazy } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
-import { ForgotPasswordPage } from '../features/auth/pages/ForgotPasswordPage'
-import { LoginPage } from '../features/auth/pages/LoginPage'
-import { RegisterPage } from '../features/auth/pages/RegisterPage'
-import { UsersPage } from '../features/users/pages/UsersPage'
-import { ResetPasswordPage } from '../features/auth/pages/ResetPasswordPage'
-import { VerifyEmailPage } from '../features/auth/pages/VerifyEmailPage'
 import { AuthLayout } from '../layouts/AuthLayout'
 import { MainLayout } from '../layouts/MainLayout'
 import { ComingSoonPage } from '../pages/common/ComingSoonPage'
-import { DashboardPage } from '../pages/dashboard/DashboardPage'
 import { NotFoundPage } from '../pages/errors/NotFoundPage'
 import { GuestRoute } from './GuestRoute'
 import { moduleRoutes } from './moduleRoutes'
 import { PermissionRoute } from './PermissionRoute'
 import { ProtectedRoute } from './ProtectedRoute'
+
+// Pages load on demand (each becomes its own chunk); the layouts provide the Suspense fallback.
+const lazyPage = (load, name) => lazy(() => load().then((module) => ({ default: module[name] })))
+
+const LoginPage = lazyPage(() => import('../features/auth/pages/LoginPage'), 'LoginPage')
+const RegisterPage = lazyPage(() => import('../features/auth/pages/RegisterPage'), 'RegisterPage')
+const ForgotPasswordPage = lazyPage(() => import('../features/auth/pages/ForgotPasswordPage'), 'ForgotPasswordPage')
+const ResetPasswordPage = lazyPage(() => import('../features/auth/pages/ResetPasswordPage'), 'ResetPasswordPage')
+const VerifyEmailPage = lazyPage(() => import('../features/auth/pages/VerifyEmailPage'), 'VerifyEmailPage')
+const DashboardPage = lazyPage(() => import('../pages/dashboard/DashboardPage'), 'DashboardPage')
+const UsersPage = lazyPage(() => import('../features/users/pages/UsersPage'), 'UsersPage')
 
 // Modules that have a real page; every other module still shows "Coming soon".
 const modulePages = {

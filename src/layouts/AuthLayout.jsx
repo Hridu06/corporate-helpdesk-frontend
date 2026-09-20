@@ -1,4 +1,6 @@
+import { Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
+import { PageLoader } from '../components/common/PageLoader'
 import { config } from '../utils/config'
 
 export function AuthLayout() {
@@ -7,7 +9,9 @@ export function AuthLayout() {
       <div className="w-full max-w-md">
         <p className="mb-6 text-center text-2xl font-semibold text-brand-700">{config.appName}</p>
         <main className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <Outlet />
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>
