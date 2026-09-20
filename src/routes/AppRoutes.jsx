@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { ForgotPasswordPage } from '../features/auth/pages/ForgotPasswordPage'
 import { LoginPage } from '../features/auth/pages/LoginPage'
 import { RegisterPage } from '../features/auth/pages/RegisterPage'
+import { UsersPage } from '../features/users/pages/UsersPage'
 import { ResetPasswordPage } from '../features/auth/pages/ResetPasswordPage'
 import { VerifyEmailPage } from '../features/auth/pages/VerifyEmailPage'
 import { AuthLayout } from '../layouts/AuthLayout'
@@ -14,11 +15,19 @@ import { moduleRoutes } from './moduleRoutes'
 import { PermissionRoute } from './PermissionRoute'
 import { ProtectedRoute } from './ProtectedRoute'
 
-// One permission-gated route per module; each becomes a real page as it is built.
+// Modules that have a real page; every other module still shows "Coming soon".
+const modulePages = {
+  users: <UsersPage />,
+}
+
+// One permission-gated route per module.
 const moduleRouteObjects = moduleRoutes.map((route) => ({
   element: <PermissionRoute permission={route.permission} />,
   children: [
-    { path: route.path, element: <ComingSoonPage title={route.label} description={route.description} /> },
+    {
+      path: route.path,
+      element: modulePages[route.key] ?? <ComingSoonPage title={route.label} description={route.description} />,
+    },
   ],
 }))
 
