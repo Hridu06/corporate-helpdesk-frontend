@@ -20,11 +20,13 @@ const VerifyEmailPage = lazyPage(() => import('../features/auth/pages/VerifyEmai
 const DashboardPage = lazyPage(() => import('../pages/dashboard/DashboardPage'), 'DashboardPage')
 const UsersPage = lazyPage(() => import('../features/users/pages/UsersPage'), 'UsersPage')
 const LoginActivityPage = lazyPage(() => import('../features/activity/pages/LoginActivityPage'), 'LoginActivityPage')
+const DepartmentsPage = lazyPage(() => import('../features/departments/pages/DepartmentsPage'), 'DepartmentsPage')
 
 // Modules that have a real page; every other module still shows "Coming soon".
 const modulePages = {
   users: <UsersPage />,
   activity: <LoginActivityPage />,
+  departments: <DepartmentsPage />,
 }
 
 // One permission-gated route per module.
