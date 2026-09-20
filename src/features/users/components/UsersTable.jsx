@@ -48,8 +48,8 @@ export function UsersTable({ users, currentUserId, actions }) {
                 <div className="flex justify-end gap-2">
                   {actions(user).map((action) => (
                     <Button key={action.label} variant={action.variant ?? 'secondary'} size="sm" onClick={action.onClick}>
-                      {action.label}
-                      <span className="sr-only"> {user.name}</span>
+                      {action.label}{' '}
+                      <span className="sr-only">{user.name}</span>
                     </Button>
                   ))}
                 </div>
