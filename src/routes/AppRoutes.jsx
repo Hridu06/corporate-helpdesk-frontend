@@ -25,6 +25,7 @@ const TicketsPage = lazyPage(() => import('../features/tickets/pages/TicketsPage
 const NewTicketPage = lazyPage(() => import('../features/tickets/pages/NewTicketPage'), 'NewTicketPage')
 const TicketDetailPage = lazyPage(() => import('../features/tickets/pages/TicketDetailPage'), 'TicketDetailPage')
 const ReportsPage = lazyPage(() => import('../features/reports/pages/ReportsPage'), 'ReportsPage')
+const RolesPage = lazyPage(() => import('../features/roles/pages/RolesPage'), 'RolesPage')
 
 // Modules that have a real page; every other module still shows "Coming soon".
 const modulePages = {
@@ -34,6 +35,7 @@ const modulePages = {
   tickets: <TicketsPage />,
   newTicket: <NewTicketPage />,
   reports: <ReportsPage />,
+  roles: <RolesPage />,
 }
 
 // One permission-gated route per module, plus routes that belong to a module but are not in the menu.
