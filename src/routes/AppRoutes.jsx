@@ -21,24 +21,36 @@ const DashboardPage = lazyPage(() => import('../pages/dashboard/DashboardPage'),
 const UsersPage = lazyPage(() => import('../features/users/pages/UsersPage'), 'UsersPage')
 const LoginActivityPage = lazyPage(() => import('../features/activity/pages/LoginActivityPage'), 'LoginActivityPage')
 const DepartmentsPage = lazyPage(() => import('../features/departments/pages/DepartmentsPage'), 'DepartmentsPage')
+const TicketsPage = lazyPage(() => import('../features/tickets/pages/TicketsPage'), 'TicketsPage')
+const NewTicketPage = lazyPage(() => import('../features/tickets/pages/NewTicketPage'), 'NewTicketPage')
+const TicketDetailPage = lazyPage(() => import('../features/tickets/pages/TicketDetailPage'), 'TicketDetailPage')
 
 // Modules that have a real page; every other module still shows "Coming soon".
 const modulePages = {
   users: <UsersPage />,
   activity: <LoginActivityPage />,
   departments: <DepartmentsPage />,
+  tickets: <TicketsPage />,
+  newTicket: <NewTicketPage />,
 }
 
-// One permission-gated route per module.
-const moduleRouteObjects = moduleRoutes.map((route) => ({
-  element: <PermissionRoute permission={route.permission} />,
-  children: [
-    {
-      path: route.path,
-      element: modulePages[route.key] ?? <ComingSoonPage title={route.label} description={route.description} />,
-    },
-  ],
-}))
+// One permission-gated route per module, plus routes that belong to a module but are not in the menu.
+const moduleRouteObjects = [
+  ...moduleRoutes.map((route) => ({
+    element: <PermissionRoute permission={route.permission} />,
+    children: [
+      {
+        path: route.path,
+        element: modulePages[route.key] ?? <ComingSoonPage title={route.label} description={route.description} />,
+      },
+    ],
+  })),
+  // Static /tickets/new outranks this dynamic segment; the API still authorises each ticket.
+  {
+    element: <PermissionRoute permission="ticket.view" />,
+    children: [{ path: '/tickets/:id', element: <TicketDetailPage /> }],
+  },
+]
 
 // Forgot/reset/verify pages are public on purpose: they are reached from emailed links.
 // Route guards are UX only; the backend authorises every API request.
