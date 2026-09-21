@@ -6,6 +6,8 @@ import { EmptyState } from '../../../components/common/EmptyState'
 import { LoadingSpinner } from '../../../components/common/LoadingSpinner'
 import { UnauthorizedPage } from '../../../pages/errors/UnauthorizedPage'
 import { PriorityBadge, StatusBadge } from '../components/TicketBadges'
+import { TicketActions } from '../components/TicketActions'
+import { TicketTimeline } from '../components/TicketTimeline'
 import { getTicket } from '../ticketsApi'
 
 function formatDateTime(value) {
@@ -23,21 +25,25 @@ function Meta({ label, children }) {
 
 export function TicketDetailPage() {
   const { id } = useParams()
-  const [state, setState] = useState({ id: null, ticket: null, error: null })
+  // payload = { ticket, abilities, events } exactly as the API returns it.
+  const [state, setState] = useState({ id: null, payload: null, error: null })
   const [reloadCount, setReloadCount] = useState(0)
 
   useEffect(() => {
     let active = true
     getTicket(id)
-      .then((ticket) => active && setState({ id, ticket, error: null }))
-      .catch((error) => active && setState({ id, ticket: null, error }))
+      .then((payload) => active && setState({ id, payload, error: null }))
+      .catch((error) => active && setState({ id, payload: null, error }))
     return () => {
       active = false
     }
   }, [id, reloadCount])
 
   const reload = useCallback(() => setReloadCount((count) => count + 1), [])
-  const { ticket, error } = state.id === id ? state : { ticket: null, error: null }
+  // Every change response carries the fresh ticket, abilities and history.
+  const applyUpdate = useCallback((payload) => setState({ id, payload, error: null }), [id])
+
+  const { payload, error } = state.id === id ? state : { payload: null, error: null }
 
   const back = (
     <Link to="/tickets" className="text-sm font-medium text-brand-600 hover:text-brand-700">
@@ -67,13 +73,15 @@ export function TicketDetailPage() {
     )
   }
 
-  if (!ticket) {
+  if (!payload) {
     return (
       <div className="flex justify-center py-12 text-brand-600">
         <LoadingSpinner size="lg" label="Loading ticket" />
       </div>
     )
   }
+
+  const { ticket, abilities, events } = payload
 
   return (
     <div className="space-y-6">
@@ -87,6 +95,8 @@ export function TicketDetailPage() {
           <PriorityBadge priority={ticket.priority} />
         </div>
       </div>
+
+      <TicketActions ticket={ticket} abilities={abilities} onUpdated={applyUpdate} />
 
       <dl className="grid gap-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-3">
         <Meta label="Customer">
@@ -104,6 +114,7 @@ export function TicketDetailPage() {
         <Meta label="Opened">{formatDateTime(ticket.created_at)}</Meta>
         <Meta label="Last updated">{formatDateTime(ticket.updated_at)}</Meta>
         {ticket.resolved_at && <Meta label="Resolved">{formatDateTime(ticket.resolved_at)}</Meta>}
+        {ticket.closed_at && <Meta label="Closed">{formatDateTime(ticket.closed_at)}</Meta>}
       </dl>
 
       <section aria-labelledby="description-heading" className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
@@ -113,6 +124,8 @@ export function TicketDetailPage() {
         {/* Rendered as plain text (React escapes it), keeping the customer's line breaks. */}
         <p className="mt-3 whitespace-pre-wrap break-words text-sm text-slate-700">{ticket.description}</p>
       </section>
+
+      <TicketTimeline openedAt={ticket.created_at} events={events} />
     </div>
   )
 }

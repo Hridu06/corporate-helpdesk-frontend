@@ -1,6 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { axiosClient } from '../../api/axiosClient'
-import { createTicket, listTickets } from './ticketsApi'
+import {
+  createTicket,
+  fetchAssignableAgents,
+  listTickets,
+  updateTicketAssignee,
+  updateTicketPriority,
+  updateTicketStatus,
+} from './ticketsApi'
 
 const okAdapter = () =>
   vi.fn(async (config) => ({ status: 200, data: { data: [], meta: {} }, headers: {}, config, statusText: '' }))
@@ -23,6 +30,27 @@ describe('ticketsApi', () => {
       page: 2,
       per_page: 15,
     })
+  })
+
+  it.each([
+    ['updateTicketStatus', () => updateTicketStatus(5, 'resolved'), 'post', '/tickets/5/status', { status: 'resolved' }],
+    ['updateTicketPriority', () => updateTicketPriority(5, 'high'), 'put', '/tickets/5/priority', { priority: 'high' }],
+    ['updateTicketAssignee (agent)', () => updateTicketAssignee(5, 9), 'put', '/tickets/5/assignee', { assignee_id: 9 }],
+    ['updateTicketAssignee (unassign)', () => updateTicketAssignee(5, null), 'put', '/tickets/5/assignee', { assignee_id: null }],
+  ])('%s sends the right request', async (_name, call, method, url, body) => {
+    await call()
+
+    const config = lastConfig()
+    expect(config.method).toBe(method)
+    expect(config.url).toBe(url)
+    expect(JSON.parse(config.data)).toEqual(body)
+  })
+
+  it('returns the assignable agents list', async () => {
+    axiosClient.defaults.adapter = vi.fn(async (config) => ({ status: 200, data: { agents: [{ id: 1, name: 'A' }] }, headers: {}, config, statusText: '' }))
+
+    expect(await fetchAssignableAgents(5)).toEqual([{ id: 1, name: 'A' }])
+    expect(axiosClient.defaults.adapter.mock.calls[0][0].url).toBe('/tickets/5/assignable-agents')
   })
 
   it('posts the new ticket body as JSON', async () => {
