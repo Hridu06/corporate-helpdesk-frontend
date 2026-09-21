@@ -40,7 +40,10 @@ function renderPage(viewer = makeUser('admin'), id = 5) {
 }
 
 describe('TicketDetailPage', () => {
-  beforeEach(() => vi.resetAllMocks())
+  beforeEach(() => {
+    vi.resetAllMocks()
+    api.listMessages.mockResolvedValue({ data: [], has_more: false })
+  })
 
   it('shows the ticket with its badges and people', async () => {
     api.getTicket.mockResolvedValue(payload())

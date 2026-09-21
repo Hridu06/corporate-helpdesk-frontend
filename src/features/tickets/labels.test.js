@@ -47,3 +47,11 @@ describe('describeEvent', () => {
     )
   })
 })
+
+describe('describeEvent (customer reply)', () => {
+  it('says the status change came from the customer replying', () => {
+    expect(
+      describeEvent({ type: 'status_changed', from: 'resolved', to: 'open', reason: 'customer_reply', actor: { id: 8, name: 'Cara' } }),
+    ).toBe('Cara replied to the ticket. Status changed from Resolved to Open.')
+  })
+})

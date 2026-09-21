@@ -60,3 +60,24 @@ export async function fetchAssignableAgents(id) {
   const { data } = await axiosClient.get(`/tickets/${id}/assignable-agents`)
   return data.agents
 }
+
+/**
+ * The conversation, oldest first: { data: [messages], has_more }. Returns the latest
+ * page; pass `before` (a message id) for older ones. The server leaves out internal
+ * notes unless the viewer may see them.
+ */
+export async function listMessages(id, { before } = {}) {
+  const { data } = await axiosClient.get(`/tickets/${id}/messages`, { params: { before: before || undefined } })
+  return data
+}
+
+/** Both return { message, entry, ticket, abilities, events }. */
+export async function postReply(id, body) {
+  const { data } = await axiosClient.post(`/tickets/${id}/replies`, { body })
+  return data
+}
+
+export async function postInternalNote(id, body) {
+  const { data } = await axiosClient.post(`/tickets/${id}/internal-notes`, { body })
+  return data
+}

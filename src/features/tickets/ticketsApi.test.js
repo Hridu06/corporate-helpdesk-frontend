@@ -3,6 +3,9 @@ import { axiosClient } from '../../api/axiosClient'
 import {
   createTicket,
   fetchAssignableAgents,
+  listMessages,
+  postInternalNote,
+  postReply,
   listTickets,
   updateTicketAssignee,
   updateTicketPriority,
@@ -60,5 +63,29 @@ describe('ticketsApi', () => {
     expect(config.method).toBe('post')
     expect(config.url).toBe('/tickets')
     expect(JSON.parse(config.data)).toEqual({ subject: 'S', description: 'D', department_id: null })
+  })
+})
+
+describe('ticket messages api', () => {
+  beforeEach(() => {
+    axiosClient.defaults.adapter = okAdapter()
+  })
+
+  it('reads the conversation, paging back with `before`', async () => {
+    await listMessages(5, { before: 12 })
+    const config = axiosClient.defaults.adapter.mock.calls[0][0]
+    expect(config.url).toBe('/tickets/5/messages')
+    expect(config.params).toEqual({ before: 12 })
+  })
+
+  it.each([
+    ['postReply', () => postReply(5, 'hi'), '/tickets/5/replies'],
+    ['postInternalNote', () => postInternalNote(5, 'hi'), '/tickets/5/internal-notes'],
+  ])('%s posts the body to the right endpoint', async (_name, call, url) => {
+    await call()
+    const config = axiosClient.defaults.adapter.mock.calls[0][0]
+    expect(config.method).toBe('post')
+    expect(config.url).toBe(url)
+    expect(JSON.parse(config.data)).toEqual({ body: 'hi' })
   })
 })

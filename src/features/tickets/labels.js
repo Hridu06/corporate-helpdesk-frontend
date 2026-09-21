@@ -18,6 +18,9 @@ export function describeEvent(event) {
 
   switch (event.type) {
     case 'status_changed':
+      if (event.reason === 'customer_reply') {
+        return `${who} replied to the ticket. Status changed from ${statusLabel(event.from)} to ${statusLabel(event.to)}.`
+      }
       return `${who} changed the status from ${statusLabel(event.from)} to ${statusLabel(event.to)}.`
     case 'priority_changed':
       return `${who} changed the priority from ${priorityLabel(event.from)} to ${priorityLabel(event.to)}.`

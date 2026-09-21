@@ -14,4 +14,4 @@ export const TICKET_PRIORITY = {
   urgent: { label: 'Urgent', variant: 'danger' },
 }
 
-export const TICKET_LIMITS = { subject: 150, description: 5000 }
+export const TICKET_LIMITS = { subject: 150, description: 5000, message: 5000 }

@@ -59,6 +59,7 @@ describe('TicketActions', () => {
   beforeEach(() => {
     vi.resetAllMocks()
     api.fetchAssignableAgents.mockResolvedValue(AGENTS)
+    api.listMessages.mockResolvedValue({ data: [], has_more: false })
   })
 
   describe('status', () => {
