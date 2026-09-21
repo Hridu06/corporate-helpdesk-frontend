@@ -27,8 +27,10 @@ export function UserFormModal({ roles, onClose, onSaved }) {
   const onSubmit = async (values) => {
     setFormError(null)
     try {
-      const { message } = await createUser(values)
-      toast.success(message)
+      const { message, email_sent: emailSent } = await createUser(values)
+      // The account exists either way; when the invitation mail failed the admin must know.
+      if (emailSent === false) toast.error(message, { duration: 8000 })
+      else toast.success(message)
       onSaved()
     } catch (error) {
       if (error.status === 422) {

@@ -1,5 +1,6 @@
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import toast from 'react-hot-toast'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { makeUser, renderWithProviders } from '../../../test/utils'
 import * as usersApi from '../usersApi'
@@ -197,6 +198,26 @@ describe('UsersPage', () => {
       expect(usersApi.createUser).toHaveBeenCalledWith({ name: 'New Person', email: 'new@example.com', role: 'agent' }),
     )
     await waitFor(() => expect(usersApi.listUsers).toHaveBeenCalledTimes(2))
+  })
+
+  it('tells the admin as an error when the invitation email could not be sent', async () => {
+    const user = userEvent.setup()
+    const error = vi.spyOn(toast, 'error').mockImplementation(() => {})
+    const success = vi.spyOn(toast, 'success').mockImplementation(() => {})
+    usersApi.createUser.mockResolvedValue({ message: 'User created, but the email could not be sent.', email_sent: false })
+    await renderPage(makeUser('admin', { id: 1 }))
+
+    await user.click(screen.getByRole('button', { name: 'Add user' }))
+    const dialog = await screen.findByRole('dialog')
+    await user.type(within(dialog).getByLabelText('Full name'), 'New Person')
+    await user.type(within(dialog).getByLabelText('Email'), 'new@example.com')
+    await user.selectOptions(within(dialog).getByLabelText('Role'), 'agent')
+    await user.click(within(dialog).getByRole('button', { name: 'Create user' }))
+
+    await waitFor(() => expect(error).toHaveBeenCalledWith('User created, but the email could not be sent.', expect.anything()))
+    expect(success).not.toHaveBeenCalled()
+    error.mockRestore()
+    success.mockRestore()
   })
 
   it('shows the backend error under the field when creating a duplicate email', async () => {
