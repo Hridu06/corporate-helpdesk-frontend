@@ -6,6 +6,7 @@ import { EmptyState } from '../../../components/common/EmptyState'
 import { LoadingSpinner } from '../../../components/common/LoadingSpinner'
 import { UnauthorizedPage } from '../../../pages/errors/UnauthorizedPage'
 import { PriorityBadge, StatusBadge } from '../components/TicketBadges'
+import { AttachmentList } from '../components/AttachmentList'
 import { TicketActions } from '../components/TicketActions'
 import { TicketConversation } from '../components/TicketConversation'
 import { TicketTimeline } from '../components/TicketTimeline'
@@ -124,6 +125,7 @@ export function TicketDetailPage() {
         </h2>
         {/* Rendered as plain text (React escapes it), keeping the customer's line breaks. */}
         <p className="mt-3 whitespace-pre-wrap break-words text-sm text-slate-700">{ticket.description}</p>
+        <AttachmentList ticketId={ticket.id} attachments={ticket.attachments} />
       </section>
 
       <TicketConversation ticket={ticket} abilities={abilities} onUpdated={applyUpdate} />

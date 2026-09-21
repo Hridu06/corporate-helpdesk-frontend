@@ -5,6 +5,7 @@ import { Button } from '../../../components/common/Button'
 import { LoadingSpinner } from '../../../components/common/LoadingSpinner'
 import { cn } from '../../../utils/cn'
 import { listMessages } from '../ticketsApi'
+import { AttachmentList } from './AttachmentList'
 import { MessageComposer } from './MessageComposer'
 
 function formatDateTime(value) {
@@ -13,7 +14,7 @@ function formatDateTime(value) {
 
 const roleLabel = (role) => (role ? role.replace(/-/g, ' ').replace(/^\w/, (c) => c.toUpperCase()) : null)
 
-function Message({ message }) {
+function Message({ message, ticketId }) {
   const internal = message.type === 'internal_note'
   const role = roleLabel(message.author?.role)
 
@@ -27,6 +28,7 @@ function Message({ message }) {
       </div>
       {/* Plain text (React escapes it), keeping line breaks. */}
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-slate-800">{message.body}</p>
+      <AttachmentList ticketId={ticketId} attachments={message.attachments} />
     </li>
   )
 }
@@ -108,7 +110,7 @@ export function TicketConversation({ ticket, abilities, onUpdated }) {
       {current && current.messages.length > 0 && (
         <ol className="space-y-3" aria-label="Messages">
           {current.messages.map((message) => (
-            <Message key={message.id} message={message} />
+            <Message key={message.id} message={message} ticketId={ticket.id} />
           ))}
         </ol>
       )}

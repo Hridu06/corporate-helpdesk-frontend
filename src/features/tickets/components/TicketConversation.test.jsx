@@ -141,7 +141,7 @@ describe('ticket conversation', () => {
     await user.type(box, '  Thanks a lot ')
     await user.click(screen.getByRole('button', { name: 'Send reply' }))
 
-    await waitFor(() => expect(api.postReply).toHaveBeenCalledWith(5, 'Thanks a lot'))
+    await waitFor(() => expect(api.postReply).toHaveBeenCalledWith(5, 'Thanks a lot', [], expect.anything()))
     expect(await screen.findByText('Thanks a lot')).toBeInTheDocument()
     expect(box).toHaveValue('')
     expect(toast.success).toHaveBeenCalledWith('Reply sent.')
@@ -162,7 +162,7 @@ describe('ticket conversation', () => {
     await user.type(screen.getByRole('textbox', { name: 'Internal note' }), 'private')
     await user.click(screen.getByRole('button', { name: 'Add note' }))
 
-    await waitFor(() => expect(api.postInternalNote).toHaveBeenCalledWith(5, 'private'))
+    await waitFor(() => expect(api.postInternalNote).toHaveBeenCalledWith(5, 'private', [], expect.anything()))
     expect(api.postReply).not.toHaveBeenCalled()
     expect(await screen.findByText('Internal note · Staff only')).toBeInTheDocument()
   })

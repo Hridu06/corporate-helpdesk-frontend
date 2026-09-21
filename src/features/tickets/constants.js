@@ -15,3 +15,12 @@ export const TICKET_PRIORITY = {
 }
 
 export const TICKET_LIMITS = { subject: 150, description: 5000, message: 5000 }
+
+// Mirrors config/helpdesk.php on the backend so the form can warn early. The server
+// judges every file by its content and is the only real check.
+export const ATTACHMENT_LIMITS = {
+  maxFiles: 5,
+  maxFileBytes: 5 * 1024 * 1024,
+  maxTotalBytes: 15 * 1024 * 1024,
+  extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'pdf', 'txt', 'csv', 'docx', 'xlsx'],
+}

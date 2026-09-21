@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { axiosClient } from '../../api/axiosClient'
 import {
   createTicket,
+  downloadAttachment,
   fetchAssignableAgents,
   listMessages,
   postInternalNote,
@@ -87,5 +88,76 @@ describe('ticket messages api', () => {
     expect(config.method).toBe('post')
     expect(config.url).toBe(url)
     expect(JSON.parse(config.data)).toEqual({ body: 'hi' })
+  })
+})
+
+describe('attachments api', () => {
+  const png = () => new File(['x'], 'a.png', { type: 'image/png' })
+
+  beforeEach(() => {
+    axiosClient.defaults.adapter = okAdapter()
+  })
+
+  it('stays JSON when there are no files', async () => {
+    await postReply(5, 'hi', [])
+    expect(JSON.parse(axiosClient.defaults.adapter.mock.calls[0][0].data)).toEqual({ body: 'hi' })
+  })
+
+  it('sends multipart with attachments[] and a long timeout when there are files', async () => {
+    const onUploadProgress = vi.fn()
+    await postReply(5, 'hi', [png(), new File(['y'], 'b.txt')], { onUploadProgress })
+
+    const config = axiosClient.defaults.adapter.mock.calls[0][0]
+    expect(config.data).toBeInstanceOf(FormData)
+    expect(config.data.get('body')).toBe('hi')
+    expect(config.data.getAll('attachments[]').map((f) => f.name)).toEqual(['a.png', 'b.txt'])
+    expect(config.timeout).toBeGreaterThan(15000)
+    expect(config.onUploadProgress).toBe(onUploadProgress)
+  })
+
+  it('leaves a null department out of the form data when opening a ticket with files', async () => {
+    await createTicket({ subject: 'S', description: 'D', department_id: null }, [png()])
+
+    const form = axiosClient.defaults.adapter.mock.calls[0][0].data
+    expect(form.get('subject')).toBe('S')
+    expect(form.has('department_id')).toBe(false)
+    expect(form.getAll('attachments[]')).toHaveLength(1)
+  })
+
+  it('downloads through the API as a blob and saves it under the attachment name', async () => {
+    const blob = new Blob(['data'])
+    axiosClient.defaults.adapter = vi.fn(async (config) => ({ status: 200, data: blob, headers: {}, config, statusText: '' }))
+    const created = vi.fn(() => 'blob:x')
+    const revoked = vi.fn()
+    URL.createObjectURL = created
+    URL.revokeObjectURL = revoked
+    const clicked = []
+    const original = HTMLAnchorElement.prototype.click
+    HTMLAnchorElement.prototype.click = function click() {
+      clicked.push(this.download)
+    }
+
+    try {
+      await downloadAttachment(5, { id: 9, name: 'report.pdf' })
+    } finally {
+      HTMLAnchorElement.prototype.click = original
+    }
+
+    const config = axiosClient.defaults.adapter.mock.calls[0][0]
+    expect(config.url).toBe('/tickets/5/attachments/9')
+    expect(config.responseType).toBe('blob')
+    expect(created).toHaveBeenCalledWith(blob)
+    expect(clicked).toEqual(['report.pdf'])
+  })
+
+  it('says so when the file is gone', async () => {
+    axiosClient.defaults.adapter = vi.fn(async (config) => {
+      const error = new Error('nf')
+      error.config = config
+      error.response = { status: 404, data: new Blob(['{}']), headers: {}, config }
+      throw error
+    })
+
+    await expect(downloadAttachment(5, { id: 9, name: 'a.txt' })).rejects.toMatchObject({ status: 404, message: 'This file is no longer available.' })
   })
 })
