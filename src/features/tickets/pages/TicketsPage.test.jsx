@@ -49,6 +49,13 @@ const table = () => within(screen.getByRole('table'))
 describe('TicketsPage', () => {
   beforeEach(() => vi.resetAllMocks())
 
+  it('applies a search query from the workspace header URL', async () => {
+    api.listTickets.mockResolvedValue(page(TICKETS))
+    renderWithProviders(<TicketsPage />, { user: makeUser('admin'), route: '/tickets?search=printer' })
+    expect(screen.getByRole('searchbox', { name: 'Search' })).toHaveValue('printer')
+    await waitFor(() => expect(api.listTickets).toHaveBeenCalledWith(expect.objectContaining({ search: 'printer' }), expect.any(AbortSignal)))
+  })
+
   it('lists tickets with number, status, priority, department and assignee', async () => {
     await renderPage(makeUser('admin'))
 

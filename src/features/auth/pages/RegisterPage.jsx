@@ -11,7 +11,7 @@ import { registerSchema } from '../schemas'
 
 export function RegisterPage() {
   const [formError, setFormError] = useState(null)
-  const [registeredEmail, setRegisteredEmail] = useState(null)
+  const [registration, setRegistration] = useState(null)
 
   const {
     register,
@@ -27,8 +27,11 @@ export function RegisterPage() {
     setFormError(null)
 
     try {
-      await registerRequest(values)
-      setRegisteredEmail(values.email)
+      const result = await registerRequest(values)
+      setRegistration({
+        email: values.email,
+        requiresVerification: result.email_verification_required !== false,
+      })
     } catch (error) {
       if (error.status === 422) {
         Object.entries(error.errors).forEach(([field, messages]) => {
@@ -42,17 +45,22 @@ export function RegisterPage() {
     }
   }
 
-  if (registeredEmail) {
+  if (registration) {
     return (
       <div className="space-y-4">
         <div className="text-center">
-          <h1 className="text-xl font-semibold text-slate-900">Check your email</h1>
+          <h1 className="text-xl font-semibold text-slate-900">
+            {registration.requiresVerification ? 'Check your email' : 'Account created'}
+          </h1>
           <p className="mt-2 text-sm text-slate-600">
-            We sent a verification link to <strong className="font-medium">{registeredEmail}</strong>. Verify your
-            address, then sign in.
+            {registration.requiresVerification ? (
+              <>Check <strong className="font-medium">{registration.email}</strong> for a verification link. Verify your address, then sign in.</>
+            ) : (
+              <>You can now sign in with <strong className="font-medium">{registration.email}</strong> and your password.</>
+            )}
           </p>
         </div>
-        <ResendVerification email={registeredEmail} />
+        {registration.requiresVerification && <ResendVerification email={registration.email} />}
         <Link
           to="/login"
           className="block text-center text-sm font-medium text-brand-600 hover:text-brand-700"

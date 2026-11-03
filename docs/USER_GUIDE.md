@@ -57,7 +57,9 @@ On the sign-in page choose **Register** and fill in **Full name**, **Email**, **
 
 Passwords must have at least 8 characters, with a lowercase letter, an uppercase letter, a number and a symbol.
 
-After registering you receive an email with a **verification link**. Open it to confirm your address; then you can sign in. If the link is old or invalid, the page lets you enter your email to get a new one.
+Email verification is currently disabled: after registering, choose **Go to sign in** and use your email and password. Existing accounts can also sign in without verifying their email.
+
+If email verification is enabled later, the registration page will ask you to verify your address before signing in and offer a way to request a new link.
 
 ### Accounts created for you
 
@@ -77,8 +79,10 @@ Use **Sign out** in the top bar, especially on shared computers.
 
 ## 3. Finding your way around
 
-- **Sidebar:** the list of pages you may use. On a phone it opens from a menu button.
-- **Dashboard:** the first page after sign-in. It shows shortcut cards for the pages your role uses, and a line "Your access" with your role and how many permissions you hold.
+- **Sidebar:** the list of pages you may use. Use the menu button to collapse it to icons on a desktop, or open the navigation drawer on a phone.
+- **Search:** use the header search bar (or press **Ctrl K**) to find tickets by subject or ticket number.
+- **Dashboard:** the first page after sign-in. It shows ticket totals, recent requests and shortcuts for the pages your role uses. Customers and agents see totals for the tickets they can access. People with report access also see ticket trends, priority and department charts for the last 7, 30 or 90 days. Choose **View data** below the trend chart to read the exact values as a table.
+- **Help:** use the question-mark button in the header for a quick guide to the workspace.
 - **Page not shown?** If a page is not in your sidebar, your role does not include it. Typing its address directly shows an "access denied" page.
 
 ---

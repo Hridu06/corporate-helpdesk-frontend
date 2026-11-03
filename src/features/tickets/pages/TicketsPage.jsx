@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Alert } from '../../../components/common/Alert'
 import { Button } from '../../../components/common/Button'
 import { EmptyState } from '../../../components/common/EmptyState'
@@ -27,7 +27,14 @@ export function TicketsPage() {
   // Customers only ever see their own tickets, so who-opened-it and assignment filters add nothing for them.
   const isStaffView = !hasRole(ROLES.CUSTOMER)
 
-  const [search, setSearch] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const search = searchParams.get('search') ?? ''
+  const setSearch = (value) => setSearchParams((current) => {
+    const next = new URLSearchParams(current)
+    if (value) next.set('search', value)
+    else next.delete('search')
+    return next
+  }, { replace: true })
   const [status, setStatus] = useState('')
   const [priority, setPriority] = useState('')
   const [assigned, setAssigned] = useState('')

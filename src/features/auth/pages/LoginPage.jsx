@@ -69,7 +69,7 @@ export function LoginPage() {
         {formError && <Alert variant="error">{formError}</Alert>}
         {unverifiedEmail && (
           <Alert variant="warning" title="Verify your email to continue">
-            <p>We sent a verification link to {unverifiedEmail}. Open it, then sign in again.</p>
+            <p>Verify {unverifiedEmail} before signing in. Use the button below to request a verification link.</p>
             <div className="mt-3">
               <ResendVerification email={unverifiedEmail} />
             </div>

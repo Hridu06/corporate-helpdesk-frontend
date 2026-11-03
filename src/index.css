@@ -26,3 +26,57 @@
     @apply outline-2 outline-offset-2 outline-brand-600;
   }
 }
+
+/* The workspace has its own surfaces so auth pages retain their existing layout. */
+.workspace-surface {
+  background: radial-gradient(ellipse at 80% 0%, #eeedfd66, transparent 48%), #f6f7fc;
+}
+
+.sidebar-surface {
+  background: radial-gradient(ellipse at 0% 0%, #222541 0%, transparent 38%), linear-gradient(165deg, #141925, #101521 65%, #161a2b);
+  box-shadow: 6px 0 32px #17214a06;
+}
+
+.brand-mark {
+  background: linear-gradient(135deg, #b4a4ff, #7461e8 65%, #6654cd);
+  box-shadow: 0 4px 18px #8b75fb35, inset 0 1px 1px #ffffff55;
+}
+
+.sidebar-link-active {
+  background: linear-gradient(105deg, #6961cfaa, #454583b8);
+  box-shadow: inset 3px 0 0 #a99bff, inset 0 1px 0 #ffffff12, 0 5px 15px #00000010;
+}
+
+.dashboard-panel {
+  border: 1px solid #e9ecf5;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ffffff, #fdfdff);
+  box-shadow: 0 3px 5px #22295503, 0 7px 24px #22295504;
+}
+
+.panel-title {
+  @apply text-[15px] font-bold tracking-[-0.4px] text-slate-900;
+}
+
+.dashboard-stat {
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.dashboard-stat:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px #5b53b512;
+}
+
+.dashboard-stat-violet .stat-icon { color: #7950ef; background: #efebff; }
+.dashboard-stat-blue .stat-icon { color: #3085f5; background: #e8f3ff; }
+.dashboard-stat-amber .stat-icon { color: #f3a018; background: #fff3dd; }
+.dashboard-stat-green .stat-icon { color: #20b76c; background: #e4f9ec; }
+.dashboard-stat-rose .stat-icon { color: #f45b78; background: #ffeaf0; }
+
+.workspace-welcome {
+  background: radial-gradient(circle at 90% 0%, #c4b5fd40, transparent 50%), linear-gradient(115deg, #eeebff, #f2f5ff);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+}
