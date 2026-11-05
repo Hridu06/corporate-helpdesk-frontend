@@ -3,6 +3,17 @@ import { Outlet } from 'react-router-dom'
 import { PageLoader } from '../components/common/PageLoader'
 import { config } from '../utils/config'
 
+/** The split-screen login always owns the full viewport, including after logout. */
+export function LoginLayout() {
+  return (
+    <main className="min-h-svh w-full">
+      <Suspense fallback={<div className="flex min-h-svh items-center justify-center"><PageLoader /></div>}>
+        <Outlet />
+      </Suspense>
+    </main>
+  )
+}
+
 export function AuthLayout() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">

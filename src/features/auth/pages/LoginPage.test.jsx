@@ -10,7 +10,7 @@ vi.mock('../authApi')
 async function submit(user, { email = 'jane@example.com', password = 'Secret!123' } = {}) {
   if (email) await user.type(screen.getByLabelText('Email'), email)
   if (password) await user.type(screen.getByLabelText('Password'), password)
-  await user.click(screen.getByRole('button', { name: 'Sign in' }))
+  await user.click(screen.getByRole('button', { name: 'Login' }))
 }
 
 describe('LoginPage', () => {
@@ -91,7 +91,7 @@ describe('LoginPage', () => {
   it('links to registration and password reset', () => {
     renderWithProviders(<LoginPage />)
     expect(screen.getByRole('link', { name: 'Register' })).toHaveAttribute('href', '/register')
-    expect(screen.getByRole('link', { name: 'Forgot password?' })).toHaveAttribute('href', '/forgot-password')
+    expect(screen.getByRole('link', { name: 'Forgot Password?' })).toHaveAttribute('href', '/forgot-password')
   })
 
   it('can reveal and hide the password', async () => {

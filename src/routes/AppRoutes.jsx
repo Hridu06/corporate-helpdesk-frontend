@@ -1,6 +1,6 @@
 import { lazy } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
-import { AuthLayout } from '../layouts/AuthLayout'
+import { AuthLayout, LoginLayout } from '../layouts/AuthLayout'
 import { MainLayout } from '../layouts/MainLayout'
 import { ComingSoonPage } from '../pages/common/ComingSoonPage'
 import { NotFoundPage } from '../pages/errors/NotFoundPage'
@@ -61,12 +61,20 @@ const moduleRouteObjects = [
 const router = createBrowserRouter([
   { path: '/', element: <Navigate to="/dashboard" replace /> },
   {
+    element: <LoginLayout />,
+    children: [
+      {
+        element: <GuestRoute />,
+        children: [{ path: '/login', element: <LoginPage /> }],
+      },
+    ],
+  },
+  {
     element: <AuthLayout />,
     children: [
       {
         element: <GuestRoute />,
         children: [
-          { path: '/login', element: <LoginPage /> },
           { path: '/register', element: <RegisterPage /> },
         ],
       },
